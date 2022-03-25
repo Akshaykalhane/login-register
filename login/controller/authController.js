@@ -49,4 +49,26 @@ router.post('/login',(req,res) => {
     })
 })
 
+
+//userinfo
+router.get('/userinfo',(req,res) => {
+    let token = req.headers['x-access-token'];
+    if(!token) res.send({auth:false, token:'No Token Provided'})
+    // verify Token
+    jwt.verify(token, config.secret, (err,user) => {
+        if(err) res.status(200).send({auth:false,token:'Invalid Token'})
+        User.findById(user.id,(err,result)=>{
+            res.send(result)
+        })
+    })
+})
+
+//delete user
+router.delete('/delete',(req,res) =>{
+    User.remove({},(err,data) => {
+        if(err) throw err;
+        res.send("User Deleted")
+    })
+})
+
 module.exports=router
